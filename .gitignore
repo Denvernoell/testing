@@ -1,0 +1,8 @@
+.streamlit/secrets.toml
+.streamlit/adminkey.pem
+testing
+*.pyc
+*.cypthon
+*.html
+
+data/well_completion_reports.parquet
