@@ -37,12 +37,12 @@ from districts.cucamonga.data import data
 def main():
 	# data = get_data()
 
-	if st.button("Refresh"):
-		st.rerun()
+	# if st.button("Refresh"):
+	# 	st.rerun()
 
 	# M = leafmap.Map()
 	M = Map()
-	all_wells = data.well_info
+	all_wells = data.well_info.sort_values(by='dms_site_id')
 
 	c1,c2,c3,c4,c5 = st.columns(5)
 	with c1:
@@ -51,11 +51,24 @@ def main():
 			"Group",
 			'Agency',
 		],key='selection_type')
+		
+		if st.session_state['selection_type'] == 'Wells':
+			st.multiselect(
+				'Agencies',
+				data.well_info['Monitor_By'].unique(),
+				default=data.well_info['Monitor_By'].unique(),
+				key='filters')
+			# well_subset = data.well_info.loc[~data.well_info['Monitor_By'].isin(st.session_state['filters'])]
 
 	with c2:
 		if st.session_state['selection_type'] == 'Wells':
+			if st.session_state['filters']:
+				well_subset = data.well_info.loc[data.well_info['Monitor_By'].isin(st.session_state['filters'])]
+			else:
+				well_subset = data.well_info
+			# well_subset = data.well_info.loc[data.well_info['Monitor_By'].isin(st.session_state['filters'])]
 
-			st.multiselect('Select Wells',all_wells['dms_site_id'],default=['CVWD 19'],key='wells')
+			st.multiselect('Select Wells',well_subset['dms_site_id'],default=[],key='wells')
 
 		elif st.session_state['selection_type'] == 'Agency':
 			groups = {			
