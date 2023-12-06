@@ -390,10 +390,10 @@ class DateFigure(Figure):
 			# add rainfall
 			import sys
 			from pathlib import Path
-			data_path = r'\\ppeng.com\pzdata\docs\Project Resources\Ag Water\apps\district_management\data'
+			# data_path = r'\\ppeng.com\pzdata\docs\Project Resources\Ag Water\apps\district_management\data'
 
-			sys.path.append(data_path)
-			from CDEC import CDEC
+			# sys.path.append(data_path)
+			from utils.CDEC import CDEC
 
 			DYC = CDEC('DYC',date_range=self.date_range)
 			rain_df = DYC.get_data(
