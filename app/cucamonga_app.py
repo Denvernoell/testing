@@ -11,6 +11,10 @@ from utils.dashboard_shared import Components, Table, District
 
 C = Components("Cucamonga Basin")
 C.header()
+
+# P = Path(".")
+# st.markdown(Path(__file__).as_posix())
+# st.markdown([i.as_posix() for i in P.iterdir()])
 supabase: Client = create_client(st.secrets['supabase_url'],st.secrets['supabase_key'])
 st.session_state['client'] = supabase
 # st.markdown(supabase.storage().list_buckets())
