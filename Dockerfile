@@ -1,27 +1,36 @@
-# app/Dockerfile
+FROM python:3.10-buster as builder
 
-FROM python:3.9-slim
+RUN pip install poetry==1.4.2
 
-# WORKDIR \\ppeng.com\pzdata\docs\Project Resources\Ag Water\apps\district_management\Dockerfile
-# WORKDIR I:\Project Resources\Ag Water\apps\district_management
-WORKDIR G:\Cucamonga Valley WD - 4026\402622002-Cucmonga Basin Safe Yield Study\400 GIS\Scripts\testing
+ENV POETRY_NO_INTERACTION=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_CACHE_DIR=/tmp/poetry_cache
 
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    curl \
-    software-properties-common \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+# WORKDIR /
 
-# RUN git clone https://github.com/streamlit/streamlit-example.git .
-# WORKDIR app
-COPY . .
+COPY pyproject.toml poetry.lock ./
+RUN touch README.md
+
+RUN --mount=type=cache,target=$POETRY_CACHE_DIR poetry install --without dev --no-root
+
+FROM python:3.10-slim-buster as runtime
+
+ENV VIRTUAL_ENV=/app/.venv \
+    PATH="/app/.venv/bin:$PATH"
+# ENV VIRTUAL_ENV=/app/.venv \
+#     PATH="/app/.venv/bin:$PATH"
 
 
-RUN pip3 install -r requirements.txt
+COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
 
-EXPOSE 8503
+COPY ./app ./app
+# COPY ./app/.streamlit .
 
-HEALTHCHECK CMD curl --fail http://localhost:8503/_stcore/health
+# cd to app and run
+# RUN cd app
 
+WORKDIR /app
 ENTRYPOINT ["streamlit", "run", "cucamonga_app.py", "--server.port=8503", "--server.address=0.0.0.0"]
+# CMD ["streamlit", "run", "cucamonga_app.py", "--server.port=8503", "--server.address=0.0.0.0"]

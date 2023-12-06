@@ -165,6 +165,7 @@ class District:
 		st.header(self.name)
 		page = self.pages[st.sidebar.radio('Page', list(self.pages.keys()))]
 		module = import_module(f'districts.{self.folder}.{page}')
+
 		module.main()
 	
 

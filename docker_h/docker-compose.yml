@@ -1,0 +1,40 @@
+# version: '3'
+# services:
+#   myapp:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     ports:
+#       - "8501:8501"
+#     healthcheck:
+#       test: ["CMD", "curl", "--fail", "http://localhost:8501/_stcore/health"]
+
+
+version: '3'
+services:
+  cucamonga_streamlit_dms:
+    image: python:3.9-slim
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # working_dir: /
+    # working_dir: I:\Project Resources\Ag Water\apps\district_management\Dockerfile
+    # working_dir: G:\Cucamonga Valley WD - 4026\402622002-Cucmonga Basin Safe Yield Study\400 GIS\Scripts\testing\Dockerfile
+    ports:
+      - "8501:8501"
+    command: >
+      sh -c "
+      apt-get update && apt-get install -y \
+        build-essential \
+        curl \
+        software-properties-common \
+        git \
+        && rm -rf /var/lib/apt/lists/* &&
+      pip3 install -r /requirements.txt &&
+      curl --fail http://localhost:8501/_stcore/health ||
+      exit 1 &&
+      streamlit run /cucamonga_app.py --server.port=8501 --server.address=0.0.0.0"
+    volumes:
+      - ./app:/app
+      - ./requirements.txt:/requirements.txt
+    container_name: cucamonga_dms
