@@ -1,5 +1,5 @@
-app/.streamlit/secrets.toml
-app/.streamlit/adminkey.pem
+.streamlit/secrets.toml
+.streamlit/adminkey.pem
 testing
 *.pyc
 *.cypthon
